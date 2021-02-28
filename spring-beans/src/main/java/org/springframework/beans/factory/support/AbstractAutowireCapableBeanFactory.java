@@ -626,6 +626,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			// 1.判断是否实现了BeanNameAware，BeanClassLoaderAware，
 			// BeanFactoryAware方法，如果有，则设置相关的属性
 			// 2.调用bean初始化的前置（BeanPostProcessor）操作
+			// 3.执行初始化的方法。
+			// 如果有initializingBean，则调用afterPropertiesSet
+			// 如果有InitMethod，则调用初始化方法
+			// 4.调用bean初始化的后置（Bean PostProcessor）操作
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		}
 		catch (Throwable ex) {
@@ -638,20 +642,35 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 		}
 
+		// 若允许循环依赖，则解决相关的循环依赖
 		if (earlySingletonExposure) {
+			// 获取指定名称的已注册的单例模式Bean对象
 			Object earlySingletonReference = getSingleton(beanName, false);
 			if (earlySingletonReference != null) {
+				// 如果经过initializeBean执行后返回的bean还是同一个（不是代理对象实例，即没有被增强）
 				if (exposedObject == bean) {
+					// 确保根据名称获取到的已注册的Bean和正在实例化的Bean是同一个
 					exposedObject = earlySingletonReference;
 				}
+				// 如果上面的if没通过，则表明引用的bean河注入的bean不一致，则需要看看依赖于此Bean的先前是否已经存在
+				//  allowRawInjectionDespiteWrapping标注是否允许此Bean的原始类型被注入到其他Bean里面
+				// 即使自己最终会被包装（代理）
+				// dependentBeanMap记录着每个依赖于此Bean的Bean的实例集合
+				// 当发生循环引用时不允许新创建实例对象
 				else if (!this.allowRawInjectionDespiteWrapping && hasDependentBean(beanName)) {
 					String[] dependentBeans = getDependentBeans(beanName);
 					Set<String> actualDependentBeans = new LinkedHashSet<>(dependentBeans.length);
+					// 获取依赖于当前Bean的Bean实例
 					for (String dependentBean : dependentBeans) {
+						// 移除掉只时用来进行类型检查的单例Bean
 						if (!removeSingletonIfCreatedForTypeCheckOnly(dependentBean)) {
 							actualDependentBeans.add(dependentBean);
 						}
 					}
+					/**
+					 * 因为bean创建后其所依赖的bean一定是已经创建的
+					 * actualDependentBeans不为空则表示当前bean创建后其依赖的bean却没有全部创建完，也就是说存
+					 */
 					if (!actualDependentBeans.isEmpty()) {
 						throw new BeanCurrentlyInCreationException(beanName,
 								"Bean with name '" + beanName + "' has been injected into other beans [" +
@@ -667,6 +686,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		// Register bean as disposable.
 		try {
+			// 注册Bean的销毁逻辑
 			registerDisposableBeanIfNecessary(beanName, bean, mbd);
 		}
 		catch (BeanDefinitionValidationException ex) {

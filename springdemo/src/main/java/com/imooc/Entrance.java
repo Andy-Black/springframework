@@ -1,5 +1,7 @@
 package com.imooc;
 
+import com.imooc.dao.impl.BoyFriend;
+import com.imooc.dao.impl.Company;
 import com.imooc.entity.User;
 import com.imooc.entity.factory.UserFactoryBean;
 import com.imooc.service.WelcomeService;
@@ -41,7 +43,8 @@ public class Entrance {
 
 	public static void main(String[] args) {
 		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(Entrance.class);
-		User user = (User) applicationContext.getBean("user5");
-		System.out.println("CustomizedBeanDefinitionRegistryPostProcessor创建的对象" + user);
+//		Company company = (Company) applicationContext.getBean("company");
+		//		User user = (User) applicationContext.getBean("user5");
+//		System.out.println("CustomizedBeanDefinitionRegistryPostProcessor创建的对象" + user);
 	}
 }

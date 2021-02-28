@@ -2,20 +2,23 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-iBeanDefinitionnstance"
+	   xmlns:context="http://www.springframework.org/schema/context"
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd">
+       http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-	<bean id="welcomeService" class="com.imooc.service.impl.WelcomeServiceImpl"/>
+		<context:annotation-config />
+<!--	<bean id="welcomeService" class="com.imooc.service.impl.WelcomeServiceImpl"/>-->
 	<!--1.使用类的无参构造函数创建-->
-	<bean id="user1" class="com.imooc.entity.User" scope="singleton" lazy-init="true" primary="true"></bean>
+<!--	<bean id="user1" class="com.imooc.entity.User" scope="singleton" lazy-init="true" primary="true"></bean>-->
 	<!--2.使用静态工厂进行创建-->
 	<!--class的值不是写User对象的全路径，而是写静态工厂的全路径-->
 	<!--factory-method的值写要调用的方法-->
-	<bean id="user2" class="com.imooc.entity.factory.StaticFactory" factory-method="getUser" scope="singleton"></bean>
+<!--	<bean id="user2" class="com.imooc.entity.factory.StaticFactory" factory-method="getUser" scope="singleton"></bean>-->
 	<!--3.使用实例工厂进行创建-->
 	<!--需要先创建factoryBean对象，再通过factoryBean对象进行调用-->
-	<bean id="userFactory" class="com.imooc.entity.factory.UserFactory"></bean>
-	<bean id="user3" factory-bean="userFactory" factory-method="getUser" scope="prototype"></bean>
+<!--	<bean id="userFactory" class="com.imooc.entity.factory.UserFactory"></bean>-->
+<!--	<bean id="user3" factory-bean="userFactory" factory-method="getUser" scope="prototype"></bean>-->
 <!--	<bean id="userFactoryBean" class="com.imooc.entity.factory.UserFactoryBean"/>-->
 
 </beans>
