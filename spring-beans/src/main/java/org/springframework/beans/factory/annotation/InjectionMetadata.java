@@ -71,10 +71,15 @@ public class InjectionMetadata {
 
 	private static final Log logger = LogFactory.getLog(InjectionMetadata.class);
 
+	// 目标Class
 	private final Class<?> targetClass;
 
+	// 当post-processor处理bean时，会解析bean Class的所有属性
+	// 在解析时会判断属性上是否标有@Value或者@Autowired注解
+	// 有就解析这个属性值，将解析后结果放入这里
+	// 保存了被注入元素的全量集合(包括Spring处理或者外部处理的)
 	private final Collection<InjectedElement> injectedElements;
-
+	// 和InjectedElements一样，不过只保存了由Spring容器默认进行处理的属性或者方法
 	@Nullable
 	private volatile Set<InjectedElement> checkedElements;
 
@@ -177,10 +182,13 @@ public class InjectionMetadata {
 	 */
 	public abstract static class InjectedElement {
 
+		// 被注解标记的成员变量，Field还是Method
 		protected final Member member;
 
+		// 是否为Field被注入
 		protected final boolean isField;
 
+		// 属性描述，JavaBeans中的接口
 		@Nullable
 		protected final PropertyDescriptor pd;
 

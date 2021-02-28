@@ -170,6 +170,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	private final Map<String, RootBeanDefinition> mergedBeanDefinitions = new ConcurrentHashMap<>(256);
 
 	/** Names of beans that have already been created at least once. */
+	// 不管单例还是原型，均会被标记，主要用在循环依赖无法解决的时候擦屁股用的
 	private final Set<String> alreadyCreated = Collections.newSetFromMap(new ConcurrentHashMap<>(256));
 
 	/** Names of beans that are currently in creation. */
@@ -1591,11 +1592,13 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 						}
 					}
 				}
+				// 反射方法加载类
 				return ClassUtils.forName(className, dynamicLoader);
 			}
 		}
 
 		// Resolve regularly, caching the result in the BeanDefinition...
+		// className不存在，则使用Classloader加载类
 		return mbd.resolveBeanClass(beanClassLoader);
 	}
 
@@ -1766,12 +1769,23 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * @param beanName the name of the bean
 	 */
 	protected void markBeanAsCreated(String beanName) {
+		// 双重检查锁机制
 		if (!this.alreadyCreated.contains(beanName)) {
 			synchronized (this.mergedBeanDefinitions) {
 				if (!this.alreadyCreated.contains(beanName)) {
 					// Let the bean definition get re-merged now that we're actually creating
 					// the bean... just in case some of its metadata changed in the meantime.
+					// 将原先合并之后的RootBeanDefinition的需要重新合并的状态设置为true
+					// 表示需要重新合并一遍，以防数据的改动
+					/** <bean id = "parent" class = "com.imooc.Parent">
+					 <property name="name" value= "ouyangfeng" />
+					 <bean/>
+					 <!-- 下面的parent表示这个child的bean的父亲是id=parent这个类 -->
+					 <bean id = "child" class = "com.imooc.Child" parent =“parent”>
+					 <property name="age" value= "18" />
+					 <bean/>*/
 					clearMergedBeanDefinition(beanName);
+					// 将以创建好的或者正在创建的Bean的名称加导alreadyCreated这个缓存中
 					this.alreadyCreated.add(beanName);
 				}
 			}

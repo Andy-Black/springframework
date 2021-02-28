@@ -52,11 +52,13 @@ public interface BeanWrapper extends ConfigurablePropertyAccessor {
 	 * Specify a limit for array and collection auto-growing.
 	 * <p>Default is unlimited on a plain BeanWrapper.
 	 * @since 4.1
+	 * 为数组和几何自动增长指定一个限制，在普通的BeanWrapper上默认是无限的
 	 */
 	void setAutoGrowCollectionLimit(int autoGrowCollectionLimit);
 
 	/**
 	 * Return the limit for array and collection auto-growing.
+	 * 返回数组和集合自动增长的限制
 	 * @since 4.1
 	 */
 	int getAutoGrowCollectionLimit();

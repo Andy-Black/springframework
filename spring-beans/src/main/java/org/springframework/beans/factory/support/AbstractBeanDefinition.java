@@ -1124,6 +1124,13 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	}
 
 	/**
+	 * <bean id ="myTestBean" class = "io.spring.test.MyTestBean">
+	 *     <lookup-method name = "getUserBean" bean = "teacher"/>
+	 *     <replaced-method name = "changedMethod" replacer = "replacer"/>
+	 * <bean/>
+	 * <bean id="teacher" class="io.spring.test.MyTestBean" />
+	 * <bean id="student" class="io.spring.test.Student" />
+	 * <bean id="replacer" class="io.spring.test.Replacer" />
 	 * Validate and prepare the method overrides defined for this bean.
 	 * Checks for existence of a method with the specified name.
 	 * @throws BeanDefinitionValidationException in case of validation failure
@@ -1151,6 +1158,8 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 		}
 		else if (count == 1) {
 			// Mark override as not overloaded, to avoid the overhead of arg type checking.
+			// 如果不存在重载，在使用CGLIB赠券各阶段就不需要进行检验了
+			// 直接找到某个方法进行增强即可，否则在增强阶段还需要做特殊的处理
 			mo.setOverloaded(false);
 		}
 	}
