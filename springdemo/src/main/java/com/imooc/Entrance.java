@@ -9,7 +9,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Entrance {
 	public static void main1(String[] args) {
 		System.out.println("Hello World!");
@@ -44,7 +46,7 @@ public class Entrance {
 	public static void main(String[] args) {
 		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(Entrance.class);
 //		Company company = (Company) applicationContext.getBean("company");
-		//		User user = (User) applicationContext.getBean("user5");
+// 		User user = (User) applicationContext.getBean("user5");
 //		System.out.println("CustomizedBeanDefinitionRegistryPostProcessor创建的对象" + user);
 	}
 }
