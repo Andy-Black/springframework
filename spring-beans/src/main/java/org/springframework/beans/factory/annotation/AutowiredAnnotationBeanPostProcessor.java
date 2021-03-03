@@ -666,24 +666,33 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 						if (value != null || this.required) {
 							// 成员变量的值部位null，并且required属性为true
 							this.cachedFieldValue = desc;
+							// 未指定Bean注册依赖Bean
 							registerDependentBeans(beanName, autowiredBeanNames);
 							if (autowiredBeanNames.size() == 1) {
 								String autowiredBeanName = autowiredBeanNames.iterator().next();
+								// 如果容器中有指定名称的Bean对象
 								if (beanFactory.containsBean(autowiredBeanName) &&
+										// 依赖对象类型和字段类型匹配，默认按类型注入
 										beanFactory.isTypeMatch(autowiredBeanName, field.getType())) {
+									// 创建一个依赖对象的引用，同时缓存
 									this.cachedFieldValue = new ShortcutDependencyDescriptor(
 											desc, autowiredBeanName, field.getType());
 								}
 							}
 						}
+						// 如果获取的一阿里关系为null，且获取required属性为false
 						else {
+							// 将对应成员变量的值的缓存设置为null
 							this.cachedFieldValue = null;
 						}
+						// 容器已经对当前成员变量的值进行缓存
 						this.cached = true;
 					}
 				}
 			}
+			// 如果字段值不为null
 			if (value != null) {
+				// 使用单射机制来赋值
 				ReflectionUtils.makeAccessible(field);
 				field.set(bean, value);
 			}
