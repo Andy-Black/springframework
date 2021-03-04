@@ -1,24 +1,24 @@
 package com.imooc;
 
-import com.imooc.dao.impl.BoyFriend;
-import com.imooc.dao.impl.Company;
+import com.imooc.controller.HelloController;
+import com.imooc.controller.HiController;
 import com.imooc.entity.User;
 import com.imooc.entity.factory.UserFactoryBean;
-import com.imooc.service.WelcomeService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
-import org.springframework.stereotype.Component;
 
-@Component
+@Configuration
+@EnableAspectJAutoProxy
+@ComponentScan("com.imooc")
 public class Entrance {
 	public static void main1(String[] args) {
 		System.out.println("Hello World!");
 		String xmlPath = "E:\\ideaworkspace\\spring-framework-5.2.9.RELEASE\\springdemo\\src\\main\\resources\\spring\\spring-config.xml";
 		ApplicationContext applicationContext = new FileSystemXmlApplicationContext(xmlPath);
-		WelcomeService welcomeService = (WelcomeService) applicationContext.getBean("welcomeService");
-		welcomeService.sayHello("David");
 
 		//得到无参构造函数创建的对象
 		User user1a = (User) applicationContext.getBean("user1");
@@ -45,6 +45,11 @@ public class Entrance {
 
 	public static void main(String[] args) {
 		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(Entrance.class);
+		System.out.println("==================轮到AOP登场啦=================");
+		HelloController helloController = (HelloController) applicationContext.getBean("helloController");
+		helloController.handleRequest();
+		HiController hiController = (HiController) applicationContext.getBean("hiController");
+		hiController.handleRequest();
 //		Company company = (Company) applicationContext.getBean("company");
 // 		User user = (User) applicationContext.getBean("user5");
 //		System.out.println("CustomizedBeanDefinitionRegistryPostProcessor创建的对象" + user);

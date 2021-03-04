@@ -7,7 +7,6 @@
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<context:component-scan base-package="com.imooc.dao.impl"/>
-<!--	<bean id="welcomeService" class="com.imooc.service.impl.WelcomeServiceImpl"/>-->
 	<!--1.使用类的无参构造函数创建-->
 <!--	<bean id="user1" class="com.imooc.entity.User" scope="singleton" lazy-init="true" primary="true"></bean>-->
 	<!--2.使用静态工厂进行创建-->
