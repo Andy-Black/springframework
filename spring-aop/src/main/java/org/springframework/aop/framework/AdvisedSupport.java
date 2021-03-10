@@ -384,6 +384,13 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 	}
 
 
+	/**
+	 * advice最终都会备转换成一个DefaultPointcutAdvisor  (pointcut+advice），它使用的切面为Pointcut.TRUE
+	 * 	 *  Pointcut.TRUE：表示啥都返回true，也就是说这个增强通知将作用于所有的方法上/所有的方法
+	 * 	 *  若要自己指定切面（比如切点表达式）,使用它的另一个构造函数：public DefaultPointcutAdvisor(Pointcut pointcut, Advice advice)
+	 * @param advice the advice to add to the tail of the chain
+	 * @throws AopConfigException
+	 */
 	@Override
 	public void addAdvice(Advice advice) throws AopConfigException {
 		int pos = this.advisors.size();
@@ -469,6 +476,8 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 
 
 	/**
+	 * 将之前注入到advisorChain中的advisors转换为MethodInterceptor
+	 * 	 * 和InterceptorAndDynamicMethodMatcher集合
 	 * Determine a list of {@link org.aopalliance.intercept.MethodInterceptor} objects
 	 * for the given method, based on this configuration.
 	 * @param method the proxied method
@@ -477,10 +486,13 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 	 */
 	public List<Object> getInterceptorsAndDynamicInterceptionAdvice(Method method, @Nullable Class<?> targetClass) {
 		MethodCacheKey cacheKey = new MethodCacheKey(method);
+		//尝试从缓存获取
 		List<Object> cached = this.methodCache.get(cacheKey);
 		if (cached == null) {
+			//缓存没有，则尝试通过advisorChainFactory去创建调用链
 			cached = this.advisorChainFactory.getInterceptorsAndDynamicInterceptionAdvice(
 					this, method, targetClass);
+			//将获取到的结果加入到缓存中
 			this.methodCache.put(cacheKey, cached);
 		}
 		return cached;
